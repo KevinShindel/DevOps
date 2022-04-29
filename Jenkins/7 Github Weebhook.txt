@@ -1,0 +1,5 @@
+1. Install plugin GitHub
+2. General -> activate GitHub Project -> Enter repos url
+3. Activate GitHub hook trigger for GITScm polling
+4. Go to Github Project -> Settings -> Webhooks -> Add new -> Payload url -> [http://JENKINS_URL:JENKINS_PORT/github-webhook/]
+5. Select content-type -> application/json

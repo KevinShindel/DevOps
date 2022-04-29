@@ -1,0 +1,1 @@
+1. Select project -> Activate Parametrized build -> Add Parameter

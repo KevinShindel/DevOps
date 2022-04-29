@@ -1,0 +1,2 @@
+git clone repository local_folder_name # clone repository
+git push origin master # push changes

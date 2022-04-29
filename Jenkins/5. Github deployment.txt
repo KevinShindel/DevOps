@@ -1,0 +1,5 @@
+1. Install plugin Git
+2. Create SSH key [ssh-keygen -> jenkins]
+3. Provide public key to the github [https://github.com/settings/keys]
+4. Provide private key to the jenkins [Add Credentials -> SSH Username with private key]
+5. Create new project -> Source code management -> Git -> RepoURL + Credentials

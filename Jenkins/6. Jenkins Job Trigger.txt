@@ -1,0 +1,14 @@
+Triggers:
+1. Trigger Build remotely -> Build run after url has been viewed
+2. Build after other project build
+3. Build periodically
+4. Pool SCM -> Check repos for changes and deploy on chedules
+5. Triggers for installed plugins
+
+
+1. Select Project -> Triggers -> Select Trigger builds remotely -> create token -> format url like [http://HOST_NAME:PORT/job/PROJECT_NAME/build?token=TOKEN]
+1.1 Run via console [http://USERNAME@JENKINS_TOKEN@HOST_NAME:PORT/job/PROJECT_NAME/build?token=TOKEN]
+2. Build after other projects are built -> Provide ProjectName and Rule
+3. Run periodacaly -> Provide cron template
+4. Pool SCM changes -> Also provide cron template + watch repository for changes
+5. GitHub hook trigger for GITScm polling -> See file 7

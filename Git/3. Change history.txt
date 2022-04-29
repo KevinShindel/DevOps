@@ -1,0 +1,4 @@
+git log # see changes
+git log -1 -p
+git checkout -- file # revert changes
+git diff --staged # The git diff command allows us to track the changes that are staged but not committed

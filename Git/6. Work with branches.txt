@@ -1,0 +1,12 @@
+git branch # show all branches
+
+git branch new_branch # create new branch
+
+git branch -d new_branch # delete branch
+
+git checkout -b branch_name # create and checkout branch
+
+git merge branch_name # merge current branch with selected
+
+git branch -D branch_name # delete branch with commits
+

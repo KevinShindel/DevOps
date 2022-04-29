@@ -1,0 +1,7 @@
+1. Download Jenkins CLI -> Management -> Jenkins CLI -> lookup jenkis-cli.jar link
+2. Connect via username: login ->  java -jar jenkins-cli.jar -auth username:pass -s http://host_url:8080/ who-am-i
+2. Connect via login: token -> java -jar jenkins-cli.jar -auth username:11641e510cb9170a6ee27f11bff04fe4c8 -s http://host_url:8080/ who-am-i
+3. Export Jenkins Login/Token variables -> export JENKINS_USER_ID=username export JENKIN_API_TOKEN=11641e510cb9170a6ee27f11bff04fe4c8
+4. Export Job into XML file -> java -jar jenkins-cli.jar  -s http://hostname:8080/ get-job JenkinsLongTestDeploy > myJob.xml
+5. Create Job from file -> java -jar jenkins-cli.jar  -s http://hostname:8080/ create-job MyNewJobName < myJob.xml
+6. Run job -> java -jar jenkins-cli.jar  -s http://ec2-18-224-223-239.us-east-2.compute.amazonaws.com:8080/ build JenkinsLongTestDeploy -s -v

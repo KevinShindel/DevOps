@@ -1,0 +1,6 @@
+1. Select master node
+2. Install SSH-agent
+3. Create few instances with Java installed
+4. Manage Credentials -> Add -> Global -> SSH Username with private key -> Enter directly
+5. Manage -> Nodes -> New Node -> FS Path (/tmp) -> Launch Type -> Via SSH (host + creds)
+6. [Optional] Select build -> Label Expression -> Enter Nodes labels

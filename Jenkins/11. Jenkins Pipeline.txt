@@ -1,0 +1,62 @@
+1. Install plugin Pipeline
+2. Create new item -> Pipeline -> Put code
+3. pipeline {
+    agent any
+
+    stages {
+        stage('1-Building') {
+            steps {
+                echo 'Start of Stage Building'
+                echo 'Building...............'
+                echo 'End of Stage Building'
+            }
+        }
+        stage('2-Test') {
+            steps {
+                echo 'Start of Stage Testing'
+                echo 'Testing...............'
+                echo 'End of Stage Testing'
+            }
+        }
+        stage('3-Deploy') {
+            steps {
+                echo 'Start of Stage Deploy'
+                echo 'Deploy...............'
+                echo 'End of Stage Deploy'
+            }
+        }
+       stage('3-Shell') {
+            steps {
+                sh "ls -lah"
+                sh '''
+                cat ~/secret.key
+
+                '''
+            }
+        }
+    }
+
+}
+
+4. # Docker image using Jenkins
+# Install docker
+# add user to dicker group
+# -> sudo usermod -aG docker $USER
+# -> sudo usermod -a -G docker jenkins
+# Install Jenkins plugins [Docker, Docker Pipeline]
+
+pipeline {
+    agent { docker { image 'python:latest' } }
+
+    stages {
+
+       stage('3-Shell') {
+            steps {
+                sh "ls -lah"
+                sh "python --version"
+            }
+        }
+    }
+
+}
+

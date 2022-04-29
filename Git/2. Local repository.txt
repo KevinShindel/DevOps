@@ -1,0 +1,5 @@
+cd myProject
+git init . # initialize project
+git status
+git add Folder/*
+git commit -m 'commit description'

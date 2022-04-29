@@ -1,0 +1,8 @@
+git --version # проверка версии
+
+git config --global user.name "User Username" # установка имени
+git config --global user.email "some@name.com" # установка мыла
+
+git config -l
+
+cat ~/.gitconfig # config file

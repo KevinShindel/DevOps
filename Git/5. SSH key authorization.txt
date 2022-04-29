@@ -1,0 +1,7 @@
+ssh-keygen
+Github -> Settings -> SSH and GPG key -> add Public ssh key
+
+# change ftom http to ssh authorisation
+git remote -v # see type of source
+git remote set-url origin git@github.com:username/project_name.git # change to ssh auhtorization
+

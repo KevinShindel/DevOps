@@ -1,0 +1,17 @@
+1. Manage Jenkins -> Script Console
+2. "cat /etc/passwd".execute().text
+3. "ls -la /home/ubuntu".execute().text
+4. "cat /etc/passwd".execute().text
+5. new File("${Jenkins.instance.root}/credentials.xml").text
+6. Jenkins.instance.metaClass.methods*.name
+7. Jenkins.instance.getNumExecutors()
+8. Jenkins.instance.setNumExecutors(5)
+9. job = Jenkins.instance.getItemByFullName("Deploy Test")
+10. job.getBuilds().each{println("Build " + it + " Results " + it.result)}
+11. job.getBuilds().each{
+  if(it.result == Result.SUCCESS) {
+    it.delete()
+  }
+} # delete all success builds
+
+12. job.updateNextBuildNumber(1) # reset build number

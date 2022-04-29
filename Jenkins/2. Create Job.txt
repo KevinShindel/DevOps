@@ -1,0 +1,13 @@
+1.Add item (Job)
+2. Provide Name
+3. Select Build - > Executing Shell
+4. Command -> echo "hello world"
+5. Delete old build -> Max build count -> 5
+
+
+# Create 2 servers (test and production)
+1. Install plugin Publish over SSH
+2. Add Servers SSH Congfig -> Manage Jenkins -> Cofigure -> Publish over SSH -> Add SSH Server
+3. Create Test script
+4. Add Build
+5. Add Post-build -> Select SSH Server -> Add Exec command

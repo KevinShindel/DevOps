@@ -1,0 +1,8 @@
+git log # show logs
+
+git checkout 4f1769453c4f9df99e0d0875056543534fe63aa1 # checkout to commit hash
+git checkout master # return to last commit
+
+git commit --amend # change last commit description
+
+git reset --soft HEAD~3 # delete 3 commits from top but save changes
