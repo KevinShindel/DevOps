@@ -1,0 +1,9 @@
+1. Create IAM user
+2. Create S3 Bucket
+3. AWS Beanstalk
+
+1. Create user with S3BucketFullpermissions, AWSElasticBeanstalkAdminitratorPermissions
+2. Create Bucket "github-beanstalk-bucket"
+3. Create Beanstalk
+    - App Name - MyflaskApp
+    - Platform - Python
