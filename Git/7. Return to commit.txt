@@ -6,3 +6,4 @@ git checkout master # return to last commit
 git commit --amend # change last commit description
 
 git reset --soft HEAD~3 # delete 3 commits from top but save changes
+git push origin --force # force push

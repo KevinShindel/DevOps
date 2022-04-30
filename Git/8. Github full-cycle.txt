@@ -1,0 +1,15 @@
+git clone git@github.com:company/repos.git # clone repos
+
+git checkout -b kevin_task002 # create new branch and checkout
+
+git add . # add changes
+git commit -m 'new features' # commit changes
+
+git push --set-upstream origin kevin_task002 # create new branch
+
+# TODO: Create pull-requets
+# TODO: Merge pull request
+
+git branch -d kevin_task002 # delete local branch
+git push origin --delete kevin_task002 # delete remote branch
+
