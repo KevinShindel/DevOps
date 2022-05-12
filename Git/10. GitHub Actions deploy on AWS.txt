@@ -2,8 +2,78 @@
 2. Create S3 Bucket
 3. AWS Beanstalk
 
-1. Create user with S3BucketFullpermissions, AWSElasticBeanstalkAdminitratorPermissions
-2. Create Bucket "github-beanstalk-bucket"
-3. Create Beanstalk
+4. Create user with S3BucketFullpermissions, AWSElasticBeanstalkAdminitratorPermissions
+5. Create Bucket "github-beanstalk-bucket"
+6. Create Beanstalk
     - App Name - MyflaskApp
     - Platform - Python
+
+
+7. Create file  .github/workflows/aws_deploy.yml
+
+name: CI-CD-Pipeline-2-AWS-Beanstalk
+
+env:
+  EB_PACKAGE_S3_BUCKET_NAME: "github-beanstalk-bucket"
+  EB_APP_NAME: "MyFlaskApp"
+  EB_ENV_NAME: "Myflaskapp-env"
+  DEPLOY_PKG_NAME: "flask_app_${{ github.sha }}.zip"
+  AWS_REGION_NAME: "us-west-2"
+
+on: // check events
+  push: // on push event
+    branches: // select branches
+      - master // only on master branch
+
+jobs: // run jobs
+  CI: // Continues Integration
+    runs-on: ubuntu-latest // Run on ubuntu image
+
+    steps:
+      - name: Git clone repository // name of step
+        uses: actions/checkout@v1 // clone
+
+      - name: Create zip deployment pkg
+        run: zip -r ${{ env.DEPLOY_PKG_NAME }} ./ -x *.git* //create zip archive
+
+      - name: Show files
+        run: ls -lah // show files in dir
+
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v1 // configure aws connection
+        with:
+          aws-access-key-id: ${{ secrets.AWS_SECRET_KEY}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION_NAME }}
+
+      - name: Copy Deployment pkg to S3 bucket
+        run: aws s3 cp ${{ env.DEPLOY_PKG_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }} //copy zip to s3 bucket
+
+      - name: Deployment complete
+        run: echo "deployment complete!"
+
+  CD: // continues deployment
+    runs-on: ubuntu-latest // use latest ubuntu
+    needs: [CI] // depends
+
+    steps:
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v1 // create aws connection
+        with:
+          aws-access-key-id: ${{ secrets.AWS_SECRET_KEY}}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION_NAME }}
+      - name: Create new ElasticBeanstalk Application
+        run: |
+          aws elasticbeanstalk create-application-version \ // create AWS Beanstalk APP
+          --aplication-name ${{ env.EB_APP_NAME }}
+          --source-bundle S3Bucket="${{ env.EB_PACKAGE_S3_BUCKET_NAME }}",S3Key="${{env.DEPLOY_PKG_NAME}}" \
+          --version-label "Ver-${{ github.sha }}
+          --description "CommitSHA-${{ github.sha }}"
+
+      - name: Deploy new ElasticBeanstalk Application
+        run: aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENV_NAME }} \
+        --version-label "Ver-${{ github.sha }}"
+
+      - name: CD Pipeline Finish
+        run: echo "deply is complete"
