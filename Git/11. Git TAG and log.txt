@@ -1,0 +1,13 @@
+git tag // посмотреть все таги
+
+git tag name_tag // создать новый таг
+
+git push origin name_tag // пушнуть новый таг
+
+git tag -d name_tag // удалить таг локально
+git push origin --delete name_tag // удалить таг удалённо
+
+git log --pretty=oneline // посмотреть историю коммитов
+git log --pretty=format:"%h%x09%an%x09%ad%x09%s" // отобразить историю с датами и пользователями
+
+git checkout name_tag // перейти на другой таг
