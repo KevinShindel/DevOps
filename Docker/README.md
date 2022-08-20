@@ -2,7 +2,9 @@
 #DOCKER 
 ![Docker](https://avatars.githubusercontent.com/u/5429470?s=280&v=4)
 ### Add docker to usergroup
-`` sudo usermod -aG docker $USER```
+``` shell
+sudo usermod -aG docker $USER
+```
 
 ### Show images
 ``` docker images ```
