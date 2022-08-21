@@ -108,3 +108,26 @@ docker port $ID 80 # docker automatically find open port and bind to 80
 ```
 
 ## Linking containers
+```shell
+docker run -d --name myredis redis
+docker run --link myredis:redis debian env 
+```
+
+## Docker volumes management and mounting
+#### Run container with mounted volume called data
+```shell
+docker run -it --name container-volume-test -h CONTAINER -v /data debian /bin/bash
+```
+#### inspect mounted volumes
+```shell
+docker inspect -f {{.Mounts}} container-volume-test
+```
+
+#### Mount local folder into container
+```shell
+docker run -it --name container-volume-test -h CONTAINER -v ~/data:/data debian /bin/bash
+```
+#### Create temp file and check it in docker folder
+```shell
+cd ~/data && touch readme.md
+```
