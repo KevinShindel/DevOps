@@ -125,9 +125,59 @@ docker inspect -f {{.Mounts}} container-volume-test
 
 #### Mount local folder into container
 ```shell
-docker run -it --name container-volume-test -h CONTAINER -v ~/data:/data debian /bin/bash
+docker run -it --name container-volume-test -h CONTAINER -v $(pwd)/data:/data debian /bin/bash
 ```
 #### Create temp file and check it in docker folder
 ```shell
 cd ~/data && touch readme.md
+```
+
+#### Create parent container with local volume
+```shell
+ docker run -it -v $(pwd)/data:/data --name parent-container debian  /bin/bash
+```
+#### Attach volume from another container 
+```shell
+docker run -it -h NEWCONTAINER --volumes-from parent-container debian /bin/bash
+```
+
+### Show logs on runned container
+```shell
+docker logs container_name
+```
+#### Provide env due console command
+```shell
+docker run -e key=value debian env
+```
+
+#### Set docker hosname
+```shell
+docker run -h "myhost" debian hostname
+```
+
+#### Attach docker to runned image
+```shell
+ID=$(docker run -d debian sh -c 'while true; do echo "tick"; sleep 1; done;')
+docker attach $ID
+```
+
+#### Save runned container
+```shell
+docker export -o saved_image DOCKER_CONTAINER_ID
+```
+
+#### Load container
+```shell
+docker import -i saved_image.tar username:conainer_tag
+docker history username:container_tag
+```
+
+#### Docker save image
+```shell
+docker save -o /path/image-name.tar username:conainer_tag
+```
+
+#### Docker load image
+```shell
+docker load -i /path/image-name.tar
 ```
