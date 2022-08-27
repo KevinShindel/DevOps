@@ -6,3 +6,5 @@ git config --global user.email "some@name.com" # установка мыла
 git config -l
 
 cat ~/.gitconfig # config file
+
+git config credential.helper store # permanently save token

@@ -181,3 +181,21 @@ docker save -o /path/image-name.tar username:conainer_tag
 ```shell
 docker load -i /path/image-name.tar
 ```
+
+#### Docker image history
+```shell
+docker history tag_name
+```
+
+#### Docker cp 
+# TODO: Find documentation 
+```shell
+docke cp ? ?
+```
+
+#### Docker executation
+```shell
+docker exec -it tag_name /bin/bash
+```
+
+#### Docker 

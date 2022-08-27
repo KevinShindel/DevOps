@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  server:
+    build: .
+    ports:
+      - "80:80"
+      - "81:81"
+    environment:
+      ENV: DEV
+    volumes:
+      - ./app:/opt/app

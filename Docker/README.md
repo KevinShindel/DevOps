@@ -42,3 +42,23 @@ sudo usermod -aG docker $USER
 
 ### Commit
 ``` docker commit CONTAINER_ID name:tag```
+
+### Clean all data 
+```shell
+docker system prune -af --volumes
+```
+
+### Clean stopped images
+```shell
+docker rm -v $(docker ps -aq -f status=exited)
+```
+
+### Mount local folder to container volume
+```shell
+docker run --rm -it -v $(pwd)/app:/opt/app server
+```
+
+### Clean docker image history
+```shell
+docker rm $(docker ps -aq)
+```

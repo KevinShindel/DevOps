@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  server:
+    container_name: flask_server
+    image: sh1nd3l/flask-server:0.4
+    ports:
+      - "80:80"
+      - "81:81"
+    environment:
+      ENV: PROD
+    links:
+      - dnmonster
+      - redis
+
+  dnmonster:
+    image: amouat/dnmonster:1.0
+    container_name: dnmonster
+
+  redis:
+    image: redis:latest
+    container_name: redis:3.0

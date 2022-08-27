@@ -7,7 +7,7 @@ def hello_world():
     head = "<html><head><title>Docker App</title></head>"
     body = "<body>" \
            "<p align=center>Hello, World! It's <b>kevin shindel</b></p>" \
-           "<hr/> <p>lorem ipsum dormir </p>" \
+           "<hr/> <p align=center>lorem ipsum dormir </p>" \
            "</body>"
     footer = "</html>"
     return head + body + footer

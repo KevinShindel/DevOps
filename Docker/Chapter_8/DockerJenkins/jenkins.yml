@@ -1,0 +1,13 @@
+flask_server:
+  build: .
+  expose:
+    - "9090"
+  environment:
+    ENV: PROD
+  links:
+    - dnmonster
+    - redis
+  dnmonster:
+    image: amouat/dnmonsrer:1.0
+  redis:
+    image: redis:latest

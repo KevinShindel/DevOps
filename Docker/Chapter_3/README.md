@@ -93,4 +93,3 @@ docker run -v /data
 docker run --rm --volumes-from myredis -v $(pwd)/backup:/backup debian cp /data/dump.rdb /backup/
 ```
 
-# docker 
