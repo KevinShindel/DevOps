@@ -27,3 +27,9 @@ docker run --name jenkins-data jenkins echo 'jenkins data container'
 docker run -d --name jenkins -p 8080:8080 --volumes-from jenkins-data -v /var/run/docker.sock:/var/run/docker.sock jenkins
 ```
 
+#### Create new project -> Freestyle config ->
+```text
+Git system control -> https://github.com/KevinShindel/DevOps/
+Build steps -> add -> Execute shell -> jenkins shell file
+
+```
