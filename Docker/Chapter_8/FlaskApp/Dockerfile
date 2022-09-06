@@ -7,6 +7,6 @@ COPY entrypoint.sh ../
 COPY requirements.txt ../
 RUN pip install --no-cache-dir -r ../requirements.txt
 RUN chmod +x ../entrypoint.sh
-EXPOSE 80 81
+EXPOSE 8080 8081
 USER uwsgi
 ENTRYPOINT ["/opt/entrypoint.sh"]

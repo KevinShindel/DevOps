@@ -35,7 +35,11 @@ curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machi
 ```
 #### Create droplet in digital ocean
 ```shell
-docker-machine create --driver digitalocean --digitalocean-image debian-11-x64 --digitalocean-access-token $(DIGITAL_OCEAN_TOKEN) docker-machine-name
+docker-machine create \ 
+              --driver digitalocean \
+              --digitalocean-image debian-11-x64 \
+              --digitalocean-access-token $(DIGITAL_OCEAN_TOKEN) \
+              docker-machine-name
 ```
 
 #### Get list of all containers
@@ -72,4 +76,29 @@ docker images
 #### Show all running images
 ```shell
 docker ps
+```
+
+# Nginx setup
+```shell
+docker run -d --name nginx-base -p 80:80 nginx:latest && curl localhost:80
+```
+
+#### Copy config from container
+```shell
+docker cp nginx-base:/etc/nginx/conf.d/default.conf .default.conf
+```
+
+#### Copy config into container
+```shell
+docker cp default.conf nginx-base:/etc/nginx/conf.d/default.conf
+```
+
+#### Check nginx config in container
+```shell
+docker exec nginx-base nginx -t
+```
+
+#### Restart nginx service in container
+```shell
+docker exec nginx-base nginx -s reload
 ```

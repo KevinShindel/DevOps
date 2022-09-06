@@ -1,0 +1,23 @@
+version: "3.3"
+services:
+  proxy:
+    container_name: proxy
+    build: .
+    links:
+      - flask
+    ports:
+      - "80:80"
+  flask:
+    image: sh1nd3l/flask-server:0.5
+    container_name: flask
+    links:
+      - dnmonster
+      - redis
+    environment:
+      ENV: PROD
+  dnmonster:
+    image: amouat/dnmonster:1.0
+    container_name: dnmonster
+  redis:
+    image: redis:7.0.4
+    container_name: redis

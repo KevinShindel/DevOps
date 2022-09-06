@@ -3,8 +3,8 @@ services:
   server:
     build: .
     ports:
-      - "80:80"
-      - "81:81"
+      - "8080:8080"
+      - "8081:8081"
     environment:
       ENV: DEV
     volumes:

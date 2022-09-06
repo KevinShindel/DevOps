@@ -8,5 +8,5 @@ elif [[ "$ENV" = "TEST" ]]; then
     exec python tests.py
 else
   echo "[!] RUNNING PROD SERVER"
-  exec uwsgi --http 0.0.0.0:80 --wsgi-file app.py --callable app --stats 0.0.0.0:81
+  exec uwsgi --http 0.0.0.0:8080 --wsgi-file app.py --callable app --stats 0.0.0.0:8081
 fi
