@@ -11,3 +11,8 @@ docker logs -t log_test
  docker run -d --name streamtest debian sh -c 'while true; do echo "worked"; sleep 2; done;'
 docker logs -t -f streamtest
 ```
+
+### Launch ELK + nginx + redis + dnmoster
+```shell
+docker-compose up
+```

@@ -1,0 +1,73 @@
+version: "3.3"
+services:
+
+  proxy:
+    container_name: proxy
+    image: sh1nd3l/proxy:0.1
+    links:
+      - server
+    ports:
+      - "80:80"
+  server:
+    image: sh1nd3l/flask-server:0.5
+    container_name: flask
+    environment:
+      - "ENV=PROD"
+    links:
+      - redis
+      - dnmonster
+  redis:
+    container_name: redis
+    image: redis:7.0.4
+
+  dnmonster:
+    container_name: dnmonster
+    image: amouat/dnmonster
+
+  logspout:
+    container_name: logspout
+    image: amouat/logspout-logstash
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    ports:
+      - "8000:90"
+    links:
+      - logstash
+
+  logstash:
+    container_name: logstash
+    image: logstash:6.4.0
+    volumes:
+      - ./logstash.conf:/etc/logstash.conf
+    environment:
+      LOGSPOUT: ignore
+    links:
+      - elasticsearch
+    ports:
+      - "127.0.0.1:5544:5544"
+    command: -f /etc/logstash.conf
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:6.4.0
+    volumes:
+      - ./elasticksearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    environment:
+      LOGSPOUT: ignore
+        - http.host=0.0.0.0
+        - transport.host=0.0.0.0
+        - "ES_JAVA_OPTS=-Xms1g -Xmx1g "
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  kibana:
+    image: kibana:6.4.0
+    container_name: kibana
+    environment:
+      LOGSPOUT: ignore
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    links:
+      - elasticsearch
+    ports:
+      - "5601:5601"

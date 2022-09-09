@@ -123,3 +123,36 @@ kubectl logs navbar-deployment-5fcc764854-wr69n
 ```shell
 kubectl exec -it  navbar-deployment-5fcc764854-wr69n /bin/bash
 ```
+
+### Delete deployment
+```shell
+kubectl delete deploy helloworld
+kubectl delete --all deployments
+kubectl delete --all services
+```
+
+### Delete all pods 
+```shell
+kubectl delete --all pods
+```
+
+### Minikube dashboard
+```shell
+minikube status
+```
+
+### minikube addons
+```shell
+minikube addons list
+ minikube addons enable dashboard
+```
+
+### manage secrets
+```shell
+ kubectl get secrets
+ kubectl create secret generic apikey --from-literal=api_key=123456
+ kubectl get secret apikey
+ kubectl get secret apikey -o yaml
+ kubectl create -f secretreader-deployment.yaml
+ kubectl logs secretreader-db46b97b4-bpm2v 
+```
