@@ -1,0 +1,23 @@
+version: "3.3"
+services:
+  proxy:
+    image: sh1nd3l/proxy:0.1
+    container_name: proxy
+    ports:
+      - "80:80"
+  backend:
+    image: sh1nd3l/flask-server:0.5
+    container_name: flask
+  redis:
+    image: redis:7.0.4
+    container_name: redis
+  dnmonster:
+    image: amouat/dnmonster
+    container_name: dnmonster
+  lodspout:
+    image: amouat/logspout-logstash
+    container_name: logspout
+    ports:
+      - "8000:90"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock

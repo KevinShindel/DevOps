@@ -1,0 +1,37 @@
+version: "3.3"
+services:
+  proxy:
+    container_name: proxy
+    image: sh1nd3l/proxy:0.1
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: tcp://localhost:5000
+    links:
+      - server
+    ports:
+      - "80:80"
+    depends_on:
+      - logstash
+
+  server:
+    image: sh1nd3l/flask-server:0.5
+    container_name: flask
+    environment:
+      - "ENV=PROD"
+    links:
+      - redis
+      - dnmonster
+  redis:
+    container_name: redis
+    image: redis:7.0.4
+  dnmonster:
+    container_name: dnmonster
+    image: amouat/dnmonster
+
+  logstash:
+    build: .
+    container_name: logstash
+    ports:
+      - "5000:5000"

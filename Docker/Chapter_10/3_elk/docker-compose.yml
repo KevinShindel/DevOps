@@ -4,10 +4,18 @@ services:
   proxy:
     container_name: proxy
     image: sh1nd3l/proxy:0.1
+    restart: always
+    logging:
+      driver: syslog
+      options:
+        syslog-address: tcp://localhost:5000
     links:
       - server
     ports:
       - "80:80"
+    depends_on:
+      - logstash
+
   server:
     image: sh1nd3l/flask-server:0.5
     container_name: flask
@@ -19,39 +27,28 @@ services:
   redis:
     container_name: redis
     image: redis:7.0.4
-
   dnmonster:
     container_name: dnmonster
     image: amouat/dnmonster
 
-  logspout:
-    container_name: logspout
-    image: amouat/logspout-logstash
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock
-    ports:
-      - "8000:90"
-    links:
-      - logstash
-
   logstash:
+    build: .
     container_name: logstash
-    image: logstash:6.4.0
-    volumes:
-      - ./logstash.conf:/etc/logstash.conf
+    depends_on:
+      - elasticsearch
+    restart: always
     environment:
       LOGSPOUT: ignore
+    ports:
+      - "5000:5000"
     links:
       - elasticsearch
-    ports:
-      - "127.0.0.1:5544:5544"
-    command: -f /etc/logstash.conf
 
   elasticsearch:
     container_name: elasticsearch
     image: elasticsearch:6.4.0
     volumes:
-      - ./elasticksearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elk.conf.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
       LOGSPOUT: ignore
         - http.host=0.0.0.0
