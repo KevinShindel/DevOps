@@ -19,6 +19,12 @@ services:
   server:
     image: sh1nd3l/flask-server:0.5
     container_name: flask
+    depends_on:
+      - logstash
+    logging:
+      driver: syslog
+      options:
+        syslog-address: tcp://localhost:5000
     environment:
       - "ENV=PROD"
     links:
@@ -27,6 +33,13 @@ services:
   redis:
     container_name: redis
     image: redis:7.0.4
+    depends_on:
+      - logstash
+    logging:
+      driver: syslog
+      options:
+        syslog-address: tcp://localhost:5000
+
   dnmonster:
     container_name: dnmonster
     image: amouat/dnmonster
