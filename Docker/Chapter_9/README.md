@@ -35,7 +35,7 @@ curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machi
 ```
 #### Create droplet in digital ocean
 ```shell
-docker-machine create \ 
+docker-machine create \
               --driver digitalocean \
               --digitalocean-image debian-11-x64 \
               --digitalocean-access-token $(DIGITAL_OCEAN_TOKEN) \

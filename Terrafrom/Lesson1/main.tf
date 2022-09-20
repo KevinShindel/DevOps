@@ -4,6 +4,12 @@ provider "aws" {
 
 resource "aws_security_group" "default" {}
 
+resource "aws_vpc" "this" {
+  cidr_block = "0.0.0.0/0"
+  enable_dns_hostnames = "true"
+}
+
+
 resource "aws_instance" "ubuntu" {
   count = 1
   ami = "ami-04505e74c0741db8d"

@@ -1,17 +1,73 @@
-# Container lookup service
+## Ambassadors pattern
 
-## Ambassadors
-```shell
-docker run -d --name real-redis redis:7
-docker run -d --name real-redis-ambassador -p 6379:6379 --link real-redis amouat/ambassador
-docker run -d --name redis_ambassador --expose 6379  \ 
--e REDIS_PORT_6379_TCP=tcp://$(docker inspect -f {{.NetworkSettings.IPAddress}} real-redis) amouat/ambassador
-docker run -d --name dnmonster amouat/dnmonster:1.0
-docker run -d  --name flask --link dnmonster:dnonster --link redis_ambassador:redis -p 80:8080 sh1nd3l/flask-server:0.5
-curl $(docker inspect -f {{.NetworkSettings.IPAddress}} flask)
+<img src="https://miro.medium.com/max/700/1*-aeeNrASuzA8SMkOxyhmcw.png" alt="Ambassador" height="300"/>
+
+```text
+Используйте этот шаблон, когда:
+если нужно создать общий набор клиентских функций между сервисами которые написаны на разных языках или платформах;
+если нужно заофлоадить cross-cutting  функции специалистам по инфраструктуре или по конкретным узким отраслям;
+если требуется поддержка облачного или кластерного коннекшина для приложения, которое устарело или по другим причинам не поддается доработке.
+
+Не используйте этот шаблон, когда:
+Если критически важнен пинг в сети для запросов. Использование посредника сопровождается дополнительной, хоть и небольшой, задержкой, и в некоторых случаях это может повлиять на приложение.
+Если все клиентские функции подключения реализованы на одном языке. В таком случае целесообразнее создать клиентскую библиотеку, предоставляя ее командам разработчиков в виде пакета.
+Если функции подключения невозможно обобщить или требуется более глубокая интеграция с клиентским приложением.
 ```
 
-## Lookup services etcd
+### Create two instanced on diff IP's
+```shell
+docker-machine create --driver digitalocean \
+              --digitalocean-image debian-11-x64 \
+              --digitalocean-access-token ${DIGITAL_OCEAN_TOKEN} \
+              do1
+
+docker-machine create --driver digitalocean \
+              --digitalocean-image debian-11-x64 \
+              --digitalocean-access-token ${DIGITAL_OCEAN_TOKEN} \
+              do2
+```
+
+### Login due docker-machine ssh do1 or DO UI
+```shell
+#docker-mashine ssh do1
+apt update && apt install docker.io -y
+docker run -d --name real-redis redis:7
+docker run -d --name real-redis-ambassador -p 6379:6379 --link real-redis amouat/ambassador
+
+IP=$(docker-machine ip do1)
+
+#docker-mashine ssh do2
+apt update && apt install docker.io -y
+docker run -d --name redis_ambassador --expose 6379 -e REDIS_PORT_6379_TCP=tcp://${IP}:6379 amouat/ambassador
+docker run -d --name dnmonster amouat/dnmonster:1.0
+docker run -d  --name flask --link dnmonster:dnmonster \
+               --link redis_ambassador:redis -p 80:8080 sh1nd3l/flask-server:0.5
+               
+IP2=$(docker-machine ip do2)
+curl ${IP2}
+```
+
+```shell
+docker-machine kill do1
+docker-machine kill do2
+```
+
+## Обнаружение сервисов с помощью etcd
+
+
+```shell
+docker-machine create --driver digitalocean \
+              --digitalocean-image debian-11-x64 \
+              --digitalocean-access-token ${DIGITAL_OCEAN_TOKEN} \
+              etcd-1
+```
+
+
+```shell
+export HOSTA=$(docker-machine ip etcd-1)
+export HOSTB$(docker-machine ip etcd-2)
+```
+
 
 ### 1.Get this image
 ```shell
@@ -40,33 +96,6 @@ docker run -it --rm \
     --network app-tier \
     --env ALLOW_NONE_AUTHENTICATION=yes \
     bitnami/etcd:latest etcdctl --endpoints http://etcd-server:2379 put /message Hello
-```
-
-
-## Lookup services SkyDNS
-## TODO: Need investigate!
-
-### 1. Run multiple mongo instances
-```shell
-docker run -d --name repl1 mongo --smallfiles
-docker run -d --name repl2 mongo --smallfiles
-docker run -d --name repl3 mongo --smallfiles
-```
-
-### 2. Pull SkyDNS 
-```shell
-docker pull crosbymichael/skydns
-docker pull crosbymichael/skydock
-```
-
-### 3. Run SkyDNS server
-```shell
-docker run -d -p 172.17.42.1:53:53/udp --name skydns crosbymichael/skydns -nameserver 8.8.8.8:53 -domain docker
-```
-
-### 4. Run SkyDocker instances
-```shell
-docker run -d -v /var/run/docker.sock:/docker.sock --name skydock crosbymichael/skydock -ttl 30 -environment dev -s /docker.sock -domain docker -name skydns
 ```
 
 ## Docker Network modes [none, container, host, bridge]
@@ -125,9 +154,10 @@ macvlan может работать в двух режимах:
 
 Конфигурация данного вида сетей недоступна из docker compose.
 
+## Docker Consul
+<img src="https://d1q6f0aelx0por.cloudfront.net/product-logos/library-consul-logo.png" height="200" width="auto" alt="Consul"/>
 
-
-## Docker Overlay
+## Docker Overlay network mode
 ## TODO: Need investigate!
 
 ## Weave
