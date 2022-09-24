@@ -98,6 +98,15 @@ docker run -it --rm \
     bitnami/etcd:latest etcdctl --endpoints http://etcd-server:2379 put /message Hello
 ```
 
+## SkyDNS
+## Consul
+## Zookeeper
+## SmartStack
+## Eureka
+## WeaveDNS
+## Docker-Discover
+
+
 ## Docker Network modes [none, container, host, bridge]
 
 #### Docker позволяет использовать 5 режимов сети:
@@ -109,6 +118,12 @@ docker run -it --rm \
 - **macvlan** - позволяет привязать контейнеру MAC-адрес, тем самым позволяет подключиться к физической сети. Рекомендуется для использования с теми приложениями, что требуют прямого доступа к сети. Не может использоваться при описании файла конфигурации Docker Compose. Поддерживает режимы bridge и 802.1q. Можно создать ipvlan, если нужен L2 мост вместо L3.
 
 #### bridge
+
+#### Запуск контейнера в режиме bridge
+```shell
+docker run -d --rm -net=bridge redis
+```
+
 Используется для коммуникации контейнеров в пределах одного хоста.
 По-умолчанию используется мост с названием bridge. Он не рекомендуется для использования в продакшене. Его настройки можно поменять при желании.
 Можно сделать свою сеть данного типа и подключать к ней контейнеры. В docker CLI создать сеть можно командой docker network create my-net, а как сделать в Docker Compose будет описано далее.
@@ -121,6 +136,10 @@ docker run -it --rm \
 Связанные флагом --link контейнеры в родной сети "мост" делят переменные окружения. Так как после внедрения настраиваемых сетей режим --link устарел и не ркомендуется к использованию, то рассматривать подробности этого пункта смысла не имеет.
 
 #### overlay
+
+```shell
+docker run  -d --rm redis -net=overlay
+```
 
 Распределенная сеть среди нескольких хостов Docker. Название сети происходит от слова "прослойка" (overlay), потому как потому как сеть является прослойкой для коммуникации контейнеров в распределенной сети.
 Сеть типа overlay требует, чтобы хост был частью сети Swarm. В Swarm по умолчанию используется сеть типа overlay с именем ingress для распределения нагрузки, а так же сеть типа bridge с названием docker_gwbridge для коммуникации самих Docker daemon.
@@ -136,10 +155,17 @@ docker run -it --rm \
 Для изменения настроек родных сетей ingress и docker_gwbridge их необходимо удалить и создать заново.
 
 #### host
+```shell
+docker run  -d --rm redis -net=host
+```
 При использовании данного режима сети сетевой стек контейнера не изолирован от хоста Docker. аким образом если контейнер привязывается к 80 порту (например, nginx), то он будет доступен по порту 80 IP-адресу хоста.
 При использовании режима в Docker swarm используется overlay сеть для управляющего трафика, а контейнер доступен только с одной машине, к которой привязался. Это создает ограничение, которое не позволяет использовать в swarm на машине с занятым портом приложение. Таким образом если в Swarm используется порт 80 в распределенной сети и на одной машине из swarm есть контейнер с host режимом, то на этой машине не будет доступно приложение из распределенной сети.
 
 #### macvlan/ipvlan
+
+```shell
+docker run  -d --rm redis -net=macvlan
+```
 
 Некоторые приложения, например для мониторинга трафика, должны быть напрямую покдлючены к физической сети. Это можно сделать с помощью режимов macvlan и ipvlan.
 Необходимо понимать, что для этого режима используется физический сетевой интерфейс, который имеет доступ к физической сети. Для изоляции от основной сетинеобходимо использовать другой сетевой интерфейс или создать VLAN.
@@ -154,10 +180,61 @@ macvlan может работать в двух режимах:
 
 Конфигурация данного вида сетей недоступна из docker compose.
 
+
+## Network in Docker
+
+### Show available networks
+```shell
+docker network ls
+```
+
+### Publish service
+```shell
+docker swarm init
+docker service create --name redis-db redis:7
+
+```
+
 ## Docker Consul
 <img src="https://d1q6f0aelx0por.cloudfront.net/product-logos/library-consul-logo.png" height="200" width="auto" alt="Consul"/>
 
-## Docker Overlay network mode
+
+## Docker <a href='https://upcloud.com/resources/tutorials/docker-swarm-orchestration'>Swarm</a>
+<img src="https://upcloud.com/media/Docker-Swarm-Orchestration-2.png" alt="docker swarm" height="200" width="auto"/>
+
+
+### Need to open 
+```text
+TCP port 2377
+TCP and UDP port 7946
+UDP port 4789
+```
+
+```shell
+IP=$(curl ifconfig.me)
+docker swarm init --advertise-addr ${IP}
+```
+
+```shell
+docker swarm join --token SWMTKN-1-0ej1azhd5v85f5xflu1t0l0m87ap0pu2rb8ag3gybapky203gh-7zst9ayhya7r4opjsuztd1cvl 13.40.161.195:2377
+```
+
+```shell
+docker network create -d overlay ovn  --attachable
+sudo docker service create -d  --name redis --replicas=3 --network ovn redis:7
+sudo docker service create -d  --name dnmonster --replicas=1 --network ovn amouat/dnmonster
+sudo docker service create -d  --name flask -p 8080:80 --replicas=2 --network ovn sh1nd3l/flask-server:0.5
+#docker run -d --rm --name redis-ov2 --network ovn redis:7
+```
+
+```shell
+docker node ls
+```
+
+### Show on whitch nodes running replica
+```shell
+sudo docker service ps redis
+```
 ## TODO: Need investigate!
 
 ## Weave

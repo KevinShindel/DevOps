@@ -37,7 +37,6 @@ resource "aws_instance" "node2" { # если нужно этот сервак п
 
 }
 
-
 resource "aws_instance" "node3" {
   ami = data.aws_ami.latest_ubuntu.id
   instance_type = "t2.micro"
