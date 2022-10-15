@@ -52,58 +52,57 @@ docker-machine kill do1
 docker-machine kill do2
 ```
 
-## Обнаружение сервисов с помощью etcd
+## ETCD
+<img src="https://etcd.io/etcd-horizontal-white.png" alt="etcd" height="200" width="auto"/>
 
-
-```shell
-docker-machine create --driver digitalocean \
-              --digitalocean-image debian-11-x64 \
-              --digitalocean-access-token ${DIGITAL_OCEAN_TOKEN} \
-              etcd-1
-```
-
-
-```shell
-export HOSTA=$(docker-machine ip etcd-1)
-export HOSTB$(docker-machine ip etcd-2)
-```
-
-
-### 1.Get this image
-```shell
-docker pull bitnami/etcd:latest
-```
-
-### 2. Create network
-```shell
- docker network create app-tier --driver bridge
-```
-
-### 3. Launch the Etcd server instance
-```shell
- docker run -d --name Etcd-server \
-    --network app-tier \
-    --publish 2379:2379 \
-    --publish 2380:2380 \
-    --env ALLOW_NONE_AUTHENTICATION=yes \
-    --env ETCD_ADVERTISE_CLIENT_URLS=http://etcd-server:2379 \
-    bitnami/etcd:latest
-```
-
-### 4. Launch your Etcd client instance
-```shell
-docker run -it --rm \
-    --network app-tier \
-    --env ALLOW_NONE_AUTHENTICATION=yes \
-    bitnami/etcd:latest etcdctl --endpoints http://etcd-server:2379 put /message Hello
+```text
+Etcd — это распределенное согласованное хранилище ключей и значений для общей конфигурации и обнаружения служб.
+etcd — это быстрая, надёжная и устойчивая к сбоям key-value база данных.
+ Она лежит в основе Kubernetes и является неотъемлемой частью его control-plane, 
+ именно поэтому критически важно уметь бэкапить и восстанавливать работоспособность как отдельных нод, 
+ так и всего etcd-кластера.
 ```
 
 ## SkyDNS
+```text
+SkyDNS позволяет поднять свой маленький DNS-сервер. SkyDock же в свою очередь, опираясь на данные, 
+получаемые из недр docker'а путём общения через сокет-соединение с docker-демоном, управляет зонами в SkyDNS.
+Связка SkyDNS+SkyDock позволяет не мучиться с поиском IP-адресов контейнеров, запущенных на вашем хосте.
+ Фактически — это service discovery.
+```
+
 ## Consul
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4g5R7mpZaq6r3iegDJPu7wmpVxO1UWO-5rA&usqp=CAU" alt="consul" height="200" width="auto"/>
+
+```text
+HashiCorp Consul — это сетевое решение службы, 
+которое позволяет командам управлять безопасным сетевым подключением между службами, 
+а также в локальных и многооблачных средах и средах выполнения. Consul предлагает сервисное обнаружение,
+ сервисную сетку, управление трафиком и автоматические обновления для устройств сетевой инфраструктуры.
+ Вы можете использовать эти функции по отдельности или вместе в одном развертывании Consul.
+```
+
 ## Zookeeper
+```text
+ZooKeeper имитирует виртуальную древовидную файловую систему из взаимосвязанных узлов,
+ которые представляют собой совмещенное понятие файла и директории. 
+Каждый узел этой иерархии может одновременно хранить данные и иметь подчиненные узлы-потомки.
+```
+
 ## SmartStack
+```text
+SmartStack — это автоматизированная система обнаружения и регистрации служб. 
+Это упрощает жизнь инженеров, прозрачно управляя созданием, удалением, отказом и обслуживанием машин,
+ выполняющих код в вашей организации. Мы считаем, что наш подход к этой проблеме является одним из лучших из возможных:
+  более простой концептуально, более простой в эксплуатации, более конфигурируемый и обеспечивающий больше самоанализа, 
+  чем любой другой. Способ SmartStack прошел боевые испытания в Airbnb за последний год и нашел широкое применение во
+   многих организациях, больших и малых.
+```
+
 ## Eureka
+
 ## WeaveDNS
+
 ## Docker-Discover
 
 
@@ -124,6 +123,7 @@ docker run -it --rm \
 docker run -d --rm -net=bridge redis
 ```
 
+```text
 Используется для коммуникации контейнеров в пределах одного хоста.
 По-умолчанию используется мост с названием bridge. Он не рекомендуется для использования в продакшене. Его настройки можно поменять при желании.
 Можно сделать свою сеть данного типа и подключать к ней контейнеры. В docker CLI создать сеть можно командой docker network create my-net, а как сделать в Docker Compose будет описано далее.
@@ -135,12 +135,15 @@ docker run -d --rm -net=bridge redis
 Пользовательские мосты могут настраиваться. Пользовательские мосты настраиваются и управляются через docker network create или в Docker Compose файле. Настройки можно менять на лету. У родного моста менять настройки надо изменяя файл конфигурации daemon.json, а так же он использует единые настройки iptables и MTU.
 Связанные флагом --link контейнеры в родной сети "мост" делят переменные окружения. Так как после внедрения настраиваемых сетей режим --link устарел и не ркомендуется к использованию, то рассматривать подробности этого пункта смысла не имеет.
 
+```
+
 #### overlay
 
 ```shell
 docker run  -d --rm redis -net=overlay
 ```
 
+```text
 Распределенная сеть среди нескольких хостов Docker. Название сети происходит от слова "прослойка" (overlay), потому как потому как сеть является прослойкой для коммуникации контейнеров в распределенной сети.
 Сеть типа overlay требует, чтобы хост был частью сети Swarm. В Swarm по умолчанию используется сеть типа overlay с именем ingress для распределения нагрузки, а так же сеть типа bridge с названием docker_gwbridge для коммуникации самих Docker daemon.
 Для overlay сетей есть так же требования к фаерволу, то есть открытым в нем портам:
@@ -149,17 +152,25 @@ docker run  -d --rm redis -net=overlay
 - TCP и UDP 7946 для коммуникации нод кластера;
 - UDP 4789 для трафика сети overlay.
 
+```
+
+```text
 У пользовательской overlay сети есть несколько интересных параметров:
 --attachable: позволяет общаться не только сервисам, но и отдельным контейнерам с другими контейнерами в пределах swarm;
 --opt encrypted: включает шифрование AES в режиме GCM с ротацией ключей каждые 12 часов. К сожалению, так как используется виртуальная LAN (VxLAN), то нагрузка на ЦП сильно возрастает, потому опция может не подходить для продакшена. Windows хосты также не поддерживают опцию.
 Для изменения настроек родных сетей ingress и docker_gwbridge их необходимо удалить и создать заново.
 
+```
+
 #### host
 ```shell
 docker run  -d --rm redis -net=host
 ```
+
+```text
 При использовании данного режима сети сетевой стек контейнера не изолирован от хоста Docker. аким образом если контейнер привязывается к 80 порту (например, nginx), то он будет доступен по порту 80 IP-адресу хоста.
 При использовании режима в Docker swarm используется overlay сеть для управляющего трафика, а контейнер доступен только с одной машине, к которой привязался. Это создает ограничение, которое не позволяет использовать в swarm на машине с занятым портом приложение. Таким образом если в Swarm используется порт 80 в распределенной сети и на одной машине из swarm есть контейнер с host режимом, то на этой машине не будет доступно приложение из распределенной сети.
+```
 
 #### macvlan/ipvlan
 
@@ -167,6 +178,7 @@ docker run  -d --rm redis -net=host
 docker run  -d --rm redis -net=macvlan
 ```
 
+```text
 Некоторые приложения, например для мониторинга трафика, должны быть напрямую покдлючены к физической сети. Это можно сделать с помощью режимов macvlan и ipvlan.
 Необходимо понимать, что для этого режима используется физический сетевой интерфейс, который имеет доступ к физической сети. Для изоляции от основной сетинеобходимо использовать другой сетевой интерфейс или создать VLAN.
 При использовании режима надо понимать, что можно нанести вред своей сети исчерпав запас IP-адресов или необдуманным созданием VLANов;
@@ -179,25 +191,7 @@ macvlan может работать в двух режимах:
 Если необходим более низкоуровневый чем L3 мост, то можно создать ipvlan.
 
 Конфигурация данного вида сетей недоступна из docker compose.
-
-
-## Network in Docker
-
-### Show available networks
-```shell
-docker network ls
 ```
-
-### Publish service
-```shell
-docker swarm init
-docker service create --name redis-db redis:7
-
-```
-
-## Docker Consul
-<img src="https://d1q6f0aelx0por.cloudfront.net/product-logos/library-consul-logo.png" height="200" width="auto" alt="Consul"/>
-
 
 ## Docker <a href='https://upcloud.com/resources/tutorials/docker-swarm-orchestration'>Swarm</a>
 <img src="https://upcloud.com/media/Docker-Swarm-Orchestration-2.png" alt="docker swarm" height="200" width="auto"/>
@@ -235,24 +229,17 @@ docker node ls
 ```shell
 sudo docker service ps redis
 ```
-## TODO: Need investigate!
-
-## Weave
-## TODO: Need investigate!
 
 
 <img src="https://avatars.githubusercontent.com/u/9976052?s=200&v=4" height="100" width="auto" alt="Weave"/>
-
-
 <img height="400px" width="auto" alt="Weave schema" src="https://www.weave.works/docs/net/latest/weave-net-overview.png" />
 
-## Flannel
-## TODO: Need investigate!
 
-https://github.com/flannel-io/flannel
+## <a href='https://github.com/flannel-io/flannel'>Flannel</a>
 
 <img src="https://github.com/flannel-io/flannel/raw/master/logos/flannel-horizontal-color.png" height="100" width="auto" alt="Flannel"/>
 
+```text
 Flannel runs a small, single binary agent called flanneld on each host, 
 and is responsible for allocating a subnet lease to each host out of a larger, preconfigured address space.
 
@@ -261,8 +248,15 @@ and any auxiliary data (such as the host's public IP).
 
 Packets are forwarded using one of several backend mechanisms including VXLAN and various cloud integrations.
 
+```
+
 
 ## Calico
-## TODO: Need investigate!
 
 <img src="https://habrastorage.org/r/w1560/webt/ut/_g/o1/ut_go1ror_jprp6n0bbwthgdkvs.png" alt="Project Calico"  height="100" width="auto"/>
+
+```text
+Project Calico — это проект с открытым исходным кодом, в котором ведется активная разработка и сообщество пользователей.
+ Calico Open Source родился в результате этого проекта и превратился в наиболее широко распространенное решение для 
+ контейнерных сетей и безопасности, которое ежедневно обслуживает более 2 миллионов узлов в 166 странах. 
+```

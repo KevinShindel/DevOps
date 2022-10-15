@@ -1,0 +1,17 @@
+version: "3.3"
+services:
+  skydns:
+    image: crosbymichael/skydns
+    hostname: skydns
+    command: skydns -nameserver 8.8.8.8:53 -domain docker
+    dns:
+      - "8.8.8.8:53"
+    ports:
+     - 172.17.42.1:53:53/udp
+
+  skydock:
+    image: crosbymichael/skydock
+    hostname: skydock
+    command: skydock -ttl 30 -environment dev -s /docker.sock -domain docker -name skydns
+    volumes:
+     - /var/run/docker.sock:/docker.sock
