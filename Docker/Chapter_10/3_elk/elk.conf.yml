@@ -4,6 +4,5 @@ network.host: 0.0.0.0
 
 http.cors.enabled: true
 http.cors.allow-origin: "*"
-#vm.max_map_count: 262144
 xpack.ml.enabled: false
 discovery.type: single-node
