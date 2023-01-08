@@ -13,14 +13,10 @@ services:
       - server
     ports:
       - "80:80"
-    depends_on:
-      - logstash
 
   server:
     image: sh1nd3l/flask-server:0.5
     container_name: flask
-    depends_on:
-      - logstash
     logging:
       driver: syslog
       options:
@@ -30,11 +26,10 @@ services:
     links:
       - redis
       - dnmonster
+
   redis:
     container_name: redis
     image: redis:7.0.4
-    depends_on:
-      - logstash
     logging:
       driver: syslog
       options:
@@ -45,10 +40,14 @@ services:
     image: amouat/dnmonster
 
   logstash:
-    build: .
+    image: logstash:6.4.0
+    volumes:
+      - ./logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     container_name: logstash
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_started
     restart: always
     environment:
       LOGSPOUT: ignore
@@ -61,12 +60,28 @@ services:
     container_name: elasticsearch
     image: elasticsearch:6.4.0
     volumes:
-      - ./elk.conf.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elk.conf.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    healthcheck:
+      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 50
     environment:
       LOGSPOUT: ignore
         - http.host=0.0.0.0
         - transport.host=0.0.0.0
         - "ES_JAVA_OPTS=-Xms1g -Xmx1g "
+        - xpack.security.enabled=false
+        - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -74,6 +89,11 @@ services:
   kibana:
     image: kibana:6.4.0
     container_name: kibana
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "kibana:5601" ]
+      interval: 60s
+      timeout: 60s
+      retries: 5
     environment:
       LOGSPOUT: ignore
       ELASTICSEARCH_URL: http://elasticsearch:9200

@@ -1,5 +1,6 @@
 version: "3.3"
 services:
+
   proxy:
     container_name: proxy
     image: sh1nd3l/proxy:0.1
@@ -7,7 +8,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: tcp://localhost:5000
+        syslog-address: udp://localhost:5000
     links:
       - server
     ports:
@@ -23,15 +24,27 @@ services:
     links:
       - redis
       - dnmonster
+
   redis:
     container_name: redis
     image: redis:7.0.4
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli","ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   dnmonster:
     container_name: dnmonster
     image: amouat/dnmonster
 
   logstash:
-    build: .
+    image: logstash:6.4.0
+    volumes:
+      - ./logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     container_name: logstash
     ports:
       - "5000:5000"
