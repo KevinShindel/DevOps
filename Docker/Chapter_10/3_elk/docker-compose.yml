@@ -5,6 +5,9 @@ services:
     container_name: proxy
     image: sh1nd3l/proxy:0.1
     restart: always
+    depends_on:
+      logstash:
+        condition: service_started
     logging:
       driver: syslog
       options:
@@ -17,6 +20,9 @@ services:
   server:
     image: sh1nd3l/flask-server:0.5
     container_name: flask
+    depends_on:
+      logstash:
+        condition: service_started
     logging:
       driver: syslog
       options:
@@ -30,6 +36,9 @@ services:
   redis:
     container_name: redis
     image: redis:7.0.4
+    depends_on:
+      logstash:
+        condition: service_started
     logging:
       driver: syslog
       options:
@@ -38,6 +47,7 @@ services:
   dnmonster:
     container_name: dnmonster
     image: amouat/dnmonster
+
 
   logstash:
     image: logstash:6.4.0
