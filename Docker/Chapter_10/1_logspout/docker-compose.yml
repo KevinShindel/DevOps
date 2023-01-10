@@ -19,7 +19,7 @@ services:
     image: amouat/dnmonster
     container_name: dnmonster
 
-  lodspout:
+  logspout:
     image: amouat/logspout-logstash
     container_name: logspout
     ports:

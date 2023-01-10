@@ -5,12 +5,16 @@ services:
     container_name: proxy
     image: sh1nd3l/proxy:0.1
     restart: always
+    labels:
+      application: "proxy"
     depends_on:
       logstash:
         condition: service_started
     logging:
       driver: syslog
       options:
+        tag: "proxy"
+        labels: "development"
         syslog-address: tcp://localhost:5000
     links:
       - server
@@ -20,12 +24,16 @@ services:
   server:
     image: sh1nd3l/flask-server:0.5
     container_name: flask
+    labels:
+      application: "flask"
     depends_on:
       logstash:
         condition: service_started
     logging:
       driver: syslog
       options:
+        tag: "flask"
+        labels: "development"
         syslog-address: tcp://localhost:5000
     environment:
       - "ENV=PROD"
@@ -36,18 +44,22 @@ services:
   redis:
     container_name: redis
     image: redis:7.0.4
+    restart: always
     depends_on:
       logstash:
         condition: service_started
     logging:
       driver: syslog
       options:
+        tag: "redis"
+        labels: "development"
         syslog-address: tcp://localhost:5000
+    labels:
+      application: "redis"
 
   dnmonster:
     container_name: dnmonster
     image: amouat/dnmonster
-
 
   logstash:
     image: logstash:6.4.0
