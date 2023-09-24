@@ -3,8 +3,7 @@ MAINTAINER "Kevin Shindel"
 RUN groupadd -r uwsgi && useradd -r -g uwsgi uwsgi
 WORKDIR /opt/app
 COPY app .
-COPY entrypoint.sh ../
-COPY requirements.txt ../
+COPY requirements.txt entrypoint.sh ../
 RUN pip install --no-cache-dir -r ../requirements.txt
 RUN chmod +x ../entrypoint.sh
 EXPOSE 80 81
